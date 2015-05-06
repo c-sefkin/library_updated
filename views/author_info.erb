@@ -13,11 +13,39 @@
         </label>
       </div>
     <% end %>
-
     <button type="submit">Add books</button>
   </form>
 <% end %>
 
+
+
+<% if @author.books().any?() %>
+<h3>Here are all the books this author wrote:</h3>
+
+  <% @author.books().each() do |book| %>
+  <div class = "checkbox">
+    <label>
+      <input type="checkbox" name="book_ids[]" value="<%= book.id() %>"><%= book.name() %>
+    </label>
+  </div>
+
+
+  <!-- <li><%= book.name() %></li> -->
+  <% end %>
+<button type="delete">Remove books</button>
+<% else %>
+<p>There are no books yet!</p>
+<% end %>
+
+
+
+
+
+
+
+
+
+<!--
 <% if @author.books().any?() %>
   <h3>Here are all the books this author wrote:</h3>
 
@@ -28,4 +56,4 @@
   </ul>
   <% else %>
   <p>There are no books yet!</p>
-  <% end %>
+  <% end %> -->
