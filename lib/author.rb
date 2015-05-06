@@ -38,9 +38,26 @@ class Author
     @name = attributes.fetch(:name, @name)
     @id = self.id()
     DB.exec("UPDATE authors SET name = '#{@name}' WHERE id = #{@id};")
+
+    attributes.fetch(:book_ids, []).each() do |book_id|
+      DB.exec("INSERT INTO authors_books (author_id, book_id) VALUES (#{self.id()}, #{book_id});")
+    end
   end
 
   define_method(:delete) do
+    DB.exec("DELETE FROM authors_books WHERE id = #{self.id()};")
     DB.exec("DELETE FROM authors WHERE id = #{self.id()};")
+  end
+
+  define_method(:books) do
+    author_books = []
+    results = DB.exec("SELECT book_id FROM authors_books WHERE author_id = #{self.id()};")
+    results.each() do |result|
+      book_id = result.fetch("book_id").to_i()
+      book = DB.exec("SELECT * FROM books WHERE id = #{book_id};")
+      name = book.first().fetch("name")
+      author_books.push(Book.new({:name => name, :id => book_id}))
+    end
+    author_books
   end
 end
