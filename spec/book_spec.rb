@@ -48,6 +48,17 @@ end
       book.update({:name => "Brad Pitt", :id => nil})
       expect(book.name()).to(eq("Brad Pitt"))
     end
+    
+    it("lets you add an author to a book") do
+      book = Book.new({:name => "Oceans Eleven", :id => nil})
+      book.save()
+      george = Author.new({:name => "George Clooney", :id => nil})
+      george.save()
+      brad = Author.new({:name => "Brad Pitt", :id => nil})
+      brad.save()
+      book.update({:author_ids => [george.id(), brad.id()]})
+      expect(book.authors()).to(eq([george, brad]))
+    end
   end
 
   describe('#delete') do
@@ -58,6 +69,19 @@ end
       book2.save()
       book.delete()
       expect(Book.all()).to(eq([book2]))
+    end
+  end
+
+  describe('#authors') do
+    it("returns all of the authors for this book") do
+      book = Book.new({:name => "Oceans Eleven", :id => nil})
+      book.save()
+      george = Author.new({:name => "George Clooney", :id => nil})
+      george.save()
+      brad = Author.new({:name => "Brad Pitt", :id => nil})
+      brad.save()
+      book.update({:author_ids => [george.id(), brad.id()]})
+      expect(book.authors()).to(eq([george, brad]))
     end
   end
 
