@@ -3,6 +3,8 @@ require("sinatra/reloader")
 also_reload("lib/**/*.rb")
 require("./lib/author")
 require("./lib/book")
+require("./lib/patron")
+require("./lib/copy")
 require("pg")
 
 DB = PG.connect({:dbname => "library_database"})
@@ -10,6 +12,8 @@ DB = PG.connect({:dbname => "library_database"})
 get('/') do
   @authors = Author.all()
   @books = Book.all()
+  # @copies = Copy.all()
+  @patrons = Patron.all()
   erb(:index)
 end
 
@@ -67,4 +71,13 @@ patch("/books/:id") do
   @book.update({:author_ids => author_ids})
   @authors = Author.all()
   erb(:book_info)
+end
+
+delete("/authors/:id") do
+  author_id = params.fetch("id").to_i()
+  @author = Author.find(author_id)
+  book_ids = params.fetch("book_ids")
+  @books = Book.all()
+  @book.update({:book_ids => book_ids})
+  erb(:author_info)
 end

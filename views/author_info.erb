@@ -28,10 +28,9 @@
       <input type="checkbox" name="book_ids[]" value="<%= book.id() %>"><%= book.name() %>
     </label>
   </div>
-
-
-  <!-- <li><%= book.name() %></li> -->
-  <% end %>
+<% end %>
+<form action="/authors/<%= @author.id() %>" method="post">
+  <input name ="_method" type ="hidden" value="delete">
 <button type="delete">Remove books</button>
 <% else %>
 <p>There are no books yet!</p>
