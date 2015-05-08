@@ -7,14 +7,14 @@ class Author
   end
 
   define_singleton_method(:all) do
-    returned_authors = DB.exec("SELECT * FROM authors;")
-    authors = []
-    returned_authors.each() do |author|
+    all_authors = []
+    result = DB.exec("SELECT * FROM authors;")
+    result.each() do |author|
       name = author.fetch("name")
       id = author.fetch("id").to_i()
-      authors.push(Author.new({:name => name, :id => id}))
+      all_authors.push(Author.new({:name => name, :id => id}))
     end
-    authors
+    all_authors
   end
 
   define_singleton_method(:find) do |id|
@@ -30,8 +30,8 @@ class Author
     @id = result.first().fetch("id").to_i()
   end
 
-  define_method(:==) do |another_author|
-    self.name().==(another_author.name()).&(self.id().==(another_author.id()))
+  define_method(:==) do |other_author|
+    self.name().==(other_author.name()).&(self.id().==(other_author.id()))
   end
 
   define_method(:update) do |attributes|
@@ -45,19 +45,30 @@ class Author
   end
 
   define_method(:delete) do
-    DB.exec("DELETE FROM authors_books WHERE id = #{self.id()};")
+    DB.exec("DELETE FROM authors_books WHERE author_id = #{self.id()};")
     DB.exec("DELETE FROM authors WHERE id = #{self.id()};")
   end
 
   define_method(:books) do
-    author_books = []
+    book_authors = []
     results = DB.exec("SELECT book_id FROM authors_books WHERE author_id = #{self.id()};")
     results.each() do |result|
       book_id = result.fetch("book_id").to_i()
       book = DB.exec("SELECT * FROM books WHERE id = #{book_id};")
       name = book.first().fetch("name")
-      author_books.push(Book.new({:name => name, :id => book_id}))
+      book_authors.push(Book.new({:name => name, :id => book_id}))
     end
-    author_books
+    book_authors
+  end
+
+  define_singleton_method(:search) do |search_name|
+    found_authors = []
+    results = DB.exec("SELECT * FROM authors WHERE name LIKE '%#{search_name}%'")
+    results.each() do |result|
+      id = result.fetch("id").to_i()
+      name = result.fetch("name")
+      found_authors.push(Author.new({:name => name, :id => id}))
+    end
+    found_authors
   end
 end

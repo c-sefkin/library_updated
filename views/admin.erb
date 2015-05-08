@@ -1,0 +1,56 @@
+<h1>Library Administration</h1>
+<h3>Librarians may edit book and author information here</h3>
+
+<p><a href="/books">Add a new book</a></p>
+<p><a href="/authors">Add a new author</a></p>
+
+<h3>Here are all the authors in this database:</h3>
+
+<% if @authors.any?() %>
+
+  <p>Click on an author to see information about them and mark which books they ahve written:</p>
+
+  <ul>
+    <% @authors.each do |author| %>
+    <li><a href="/authors/<%= author.id() %>"><%= author.name() %></a></li>
+    <% end %>
+  </ul>
+  <% else %>
+    <p>There are no authors listed yet!</p>
+  <% end %>
+
+  <h3>Here are all the books in this database:</h3>
+
+  <% if @books.any?() %>
+  <p>Click on a book to see more information about it and mark which author wrote it:</p>
+
+  <ul>
+    <% @books.each do |book| %>
+    <li><a href="/books/<%= book.id() %>"><%= book.name() %></a></li>
+    <% end %>
+  </ul>
+  <% else %>
+    <p>There are no books listed yet!</p>
+  <% end %>
+
+  <h3>Search for a book or author in this database</h3>
+
+  <div class='form-group'>
+    <form action='/books/search' method='post'>
+      <label for="search_term">Search:</label>
+      <input id="search_term" name="search_term" type="text" class="form-control">
+      <br />
+
+      <button type="submit" class="btn btn-info">Search</button>
+
+    </form>
+  </div>
+
+  <h3>Currently overdue items:</h3>
+  <ul>
+    <% @overdue_items.each() do |item| %>
+    <li><%= Patron.find(item.patron_id()).name%> - <%= Book.find(item.book_id()).name() %> - Due: <%= item.due_date() %></li>
+  <%end%>
+  </ul>
+
+  <p><a href="/">Return to Main Page</a></p>
